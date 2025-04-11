@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, Ref, watch, reactive, onMounted } from "vue";
+import { ref, Ref, watch, reactive, onMounted, nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import { useCurrencyStore } from "@/store/currency";
 import { AVAILABLE_CURRENCIES } from "@/static/currency";
-import {isNumber, isRequired} from "@/helpers/validations";
+import { isNumber, isRequired } from "@/helpers/validations";
+import { VForm } from "vuetify/components";
 
 const { currencies, currentCurrency } = storeToRefs(useCurrencyStore());
 
@@ -22,30 +23,48 @@ const getInverseExchangeRate = () => {
 
 const initValue = ref(1) as Ref<number | string>;
 const compareValue = ref(1) as Ref<number | string>;
-const form = ref();
+const formInit = ref() as Ref<VForm | null>;
+const formCompare = ref() as Ref<VForm | null>;
 
-const isFormValid = async () => {
-  const { valid } = await form.value?.validate();
+const isFormValid = async (form: VForm | null) => {
+  const { valid } = (await form?.validate()) ?? { valid: false };
   return valid;
+};
+
+const getParsedAndCheckedForNaN = (value: number) => {
+  if (isNaN(value)) {
+    return "0.00";
+  }
+  return value.toFixed(2);
 };
 
 const updateCompareValue = () => {
   const rate = getExchangeRate();
-  compareValue.value = Number(Number(initValue.value) * rate).toFixed(2);
+  const resultingValue = Number(Number(initValue.value) * rate);
+
+  compareValue.value = getParsedAndCheckedForNaN(resultingValue);
 };
 
 const updateInitValue = () => {
   const rate = getInverseExchangeRate();
-  initValue.value = Number(Number(compareValue.value) * rate).toFixed(2);
+  const resultingValue = Number(Number(compareValue.value) * rate);
+
+  initValue.value = getParsedAndCheckedForNaN(resultingValue);
 };
 
 const changeCalculationValues = async (source: "init" | "compare") => {
-	const valid = await isFormValid();
-	
-	if (!valid) {
-		return;
-	}
-	
+  const formToValidate: VForm | null =
+    source === "init" ? formInit.value : formCompare.value;
+
+  let valid;
+  await nextTick(async () => {
+    valid = await isFormValid(formToValidate);
+  });
+
+  if (!valid) {
+    return;
+  }
+
   if (source === "init") {
     updateCompareValue();
   } else {
@@ -56,12 +75,6 @@ const changeCalculationValues = async (source: "init" | "compare") => {
 watch(
   [initValueCurrency, compareValueCurrency],
   async () => {
-	  const valid = await isFormValid();
-	  
-	  if (!valid) {
-		  return;
-	  }
-		
     updateCompareValue();
   },
   { deep: true },
@@ -80,7 +93,7 @@ onMounted(() => {
       </v-card-title>
       <v-divider />
       <v-card-text>
-        <v-form ref="form" @submit.prevent validate-on="input">
+        <v-form ref="formInit" @submit.prevent validate-on="input">
           <v-row>
             <v-col cols="6">
               <v-text-field
@@ -102,6 +115,8 @@ onMounted(() => {
               />
             </v-col>
           </v-row>
+        </v-form>
+        <v-form ref="formCompare" @submit.prevent validate-on="input">
           <v-row>
             <v-col cols="6">
               <v-text-field
