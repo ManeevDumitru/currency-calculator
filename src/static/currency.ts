@@ -1,19 +1,20 @@
-import { CurrencyInterface } from "@/interfaces/currency";
+import { CurrencyInterface } from "@/types/currency";
+import { CurrencyEnum } from "@/enums/currency";
 
 export const AVAILABLE_CURRENCIES: CurrencyInterface[] = [
   {
     name: "RUB",
-    value: "rub",
+    value: CurrencyEnum.RUB,
     symbol: "₽",
   },
   {
     name: "USD",
-    value: "usd",
+    value: CurrencyEnum.USD,
     symbol: "$",
   },
   {
     name: "EUR",
-    value: "eur",
+    value: CurrencyEnum.EUR,
     symbol: "€",
   },
 ];

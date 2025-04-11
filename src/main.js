@@ -3,6 +3,7 @@ import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loade
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import router from "@/router";
 
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
@@ -20,4 +21,4 @@ const vuetify = createVuetify({
 	},
 });
 
-createApp(App).use(vuetify).use(pinia).mount("#app");
+createApp(App).use(vuetify).use(pinia).use(router).mount("#app");

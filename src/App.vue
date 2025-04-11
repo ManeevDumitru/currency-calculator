@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { useCurrencyStore } from "@/store/currency";
 
 const route = useRoute();
-const routeLayout = computed(() => route.meta.layout || "default");
+const { fetchCurrencies } = useCurrencyStore();
+
+(async () => {
+  await fetchCurrencies();
+})();
 </script>
 
 <template>
-	<v-app theme="dark">
-		<component :is="route.meta.layoutComponent" />
-	</v-app>
+  <Suspense>
+    <v-app theme="dark">
+      <component :is="route.meta.layoutComponent" />
+    </v-app>
+  </Suspense>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
