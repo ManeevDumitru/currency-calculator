@@ -41,12 +41,14 @@ const getParsedAndCheckedForNaN = (value: number) => {
 const updateCompareValue = () => {
   const rate = getExchangeRate();
   const resultingValue = Number(Number(initValue.value) * rate);
-
+	
+	console.log(rate, resultingValue);
+	
   compareValue.value = getParsedAndCheckedForNaN(resultingValue);
 };
 
 const updateInitValue = () => {
-  const rate = getInverseExchangeRate();
+  const rate = getExchangeRate(true);
   const resultingValue = Number(Number(compareValue.value) * rate);
 
   initValue.value = getParsedAndCheckedForNaN(resultingValue);
@@ -89,7 +91,7 @@ onMounted(() => {
                 :label="initValueCurrency.name"
                 :rules="[isRequired(), isNumber()]"
                 v-model="initValue"
-                @update="changeCalculationValues('init')"
+                @input="changeCalculationValues('init')"
               />
             </v-col>
             <v-col cols="6">
@@ -110,7 +112,7 @@ onMounted(() => {
                 :label="compareValueCurrency.name"
                 :rules="[isRequired(), isNumber()]"
                 v-model="compareValue"
-                @update="changeCalculationValues('compare')"
+                @input="changeCalculationValues('compare')"
               />
             </v-col>
             <v-col cols="6">
