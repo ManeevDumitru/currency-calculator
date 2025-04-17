@@ -11,11 +11,11 @@ const { fetchCurrencies } = useCurrencyStore();
 </script>
 
 <template>
-  <Suspense>
-    <v-app theme="dark">
-      <component :is="route.meta.layoutComponent" />
-    </v-app>
-  </Suspense>
+    <Suspense>
+      <v-app theme="dark">
+        <component :is="route.meta.layoutComponent" />
+      </v-app>
+    </Suspense>
 </template>
 
 <style scoped></style>

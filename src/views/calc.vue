@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, Ref, watch, reactive, onMounted } from "vue";
+import { ref, Ref, watch, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useCurrencyStore } from "@/store/currency";
 import { AVAILABLE_CURRENCIES } from "@/static/currency";
@@ -8,18 +8,25 @@ import { VForm } from "vuetify/components";
 
 const { currencies, currentCurrency } = storeToRefs(useCurrencyStore());
 
-const initValueCurrency = reactive({ ...currentCurrency.value });
-const compareValueCurrency = reactive({ ...AVAILABLE_CURRENCIES[1] });
+const initValueCurrency = ref({ ...currentCurrency.value });
+const compareValueCurrency = ref({ ...AVAILABLE_CURRENCIES[1] });
 
-const getExchangeRate = () => {
-  const rateKey = `${initValueCurrency.value}-${compareValueCurrency.value}`;
-  return Number(currencies.value[rateKey]) || 0;
+const getExchangeRate = (isInversed: boolean = false) => {
+	const rateKey = isInversed
+		? `${compareValueCurrency.value.value}-${initValueCurrency.value.value}`
+		: `${initValueCurrency.value.value}-${compareValueCurrency.value.value}`;
+	return Number(currencies.value[rateKey]) || 0;
 };
 
-const getInverseExchangeRate = () => {
-  const rateKey = `${compareValueCurrency.value}-${initValueCurrency.value}`;
-  return Number(currencies.value[rateKey]) || 0;
-};
+// const getExchangeRate = () => {
+//   const rateKey = `${initValueCurrency.value.value}-${compareValueCurrency.value.value}`;
+//   return Number(currencies.value[rateKey]) || 0;
+// };
+//
+// const getInverseExchangeRate = () => {
+//   const rateKey = `${compareValueCurrency.value.value}-${initValueCurrency.value.value}`;
+//   return Number(currencies.value[rateKey]) || 0;
+// };
 
 const initValue = ref(1) as Ref<number | string>;
 const compareValue = ref(1) as Ref<number | string>;
@@ -82,7 +89,7 @@ onMounted(() => {
                 :label="initValueCurrency.name"
                 :rules="[isRequired(), isNumber()]"
                 v-model="initValue"
-                @update:model-value="changeCalculationValues('init')"
+                @update="changeCalculationValues('init')"
               />
             </v-col>
             <v-col cols="6">
@@ -103,7 +110,7 @@ onMounted(() => {
                 :label="compareValueCurrency.name"
                 :rules="[isRequired(), isNumber()]"
                 v-model="compareValue"
-                @update:model-value="changeCalculationValues('compare')"
+                @update="changeCalculationValues('compare')"
               />
             </v-col>
             <v-col cols="6">
