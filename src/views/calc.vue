@@ -8,16 +8,16 @@ import { VForm } from "vuetify/components";
 
 const { currencies, currentCurrency } = storeToRefs(useCurrencyStore());
 
-const initValueCurrency = ref(reactive({ ...currentCurrency.value }));
-const compareValueCurrency = ref(reactive({ ...AVAILABLE_CURRENCIES[1] }));
+const initValueCurrency = reactive({ ...currentCurrency.value });
+const compareValueCurrency = reactive({ ...AVAILABLE_CURRENCIES[1] });
 
 const getExchangeRate = () => {
-  const rateKey = `${initValueCurrency.value.value}-${compareValueCurrency.value.value}`;
+  const rateKey = `${initValueCurrency.value}-${compareValueCurrency.value}`;
   return Number(currencies.value[rateKey]) || 0;
 };
 
 const getInverseExchangeRate = () => {
-  const rateKey = `${compareValueCurrency.value.value}-${initValueCurrency.value.value}`;
+  const rateKey = `${compareValueCurrency.value}-${initValueCurrency.value}`;
   return Number(currencies.value[rateKey]) || 0;
 };
 

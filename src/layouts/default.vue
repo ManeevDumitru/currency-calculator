@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import NavBar from "@/components/navigation/NavBar.vue";
-import { useGlobalStore } from "@/store/global";
 import { storeToRefs } from "pinia";
+import {useCurrencyStore} from "@/store/currency";
 
-const { loading } = storeToRefs(useGlobalStore());
+const { calculatorLoading } = storeToRefs(useCurrencyStore());
 </script>
 
 <template>
   <v-main>
     <NavBar />
 
-    <template v-if="!loading">
+    <template v-if="!calculatorLoading">
 	    <router-view />
     </template>
 	  <div v-else class="text-center">
