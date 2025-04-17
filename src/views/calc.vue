@@ -42,8 +42,6 @@ const updateCompareValue = () => {
   const rate = getExchangeRate();
   const resultingValue = Number(Number(initValue.value) * rate);
 	
-	console.log(rate, resultingValue);
-	
   compareValue.value = getParsedAndCheckedForNaN(resultingValue);
 };
 
